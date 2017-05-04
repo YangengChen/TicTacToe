@@ -24,6 +24,9 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
         elif (comm == 'play'):
         else:
 
+    def notify_player(msg):
+        self.request.sendall(msg)
+
 
 def __exit(code):
     if (code == 1):
