@@ -25,9 +25,12 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
     # Handler for connection request to server
     def handle(self):
         self.input = self.request.recv(1024).strip()
-        response = handle_command(self.input)
-        if (response is not None):
-            self.request.sendall(response)
+        try:
+            response = handle_command(self.input)
+            if (response is not None):
+                self.request.sendall('200 OK ' + response)
+        except Exception, msg:
+            self.request.sendall('400 ERROR ' + msg.args[1])
 
     def handle_command(comm):
     	commands = comm.split(" ")
@@ -65,7 +68,8 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
 
     def play(other_player):
     	if any(player.name == other_player for player in available_players)
-    		player2 = next((player for player in available_players if player.name == other_player), None)
+    		player2 = next((player for player in available_players 
+                            if player.name == other_player), None)
     		new_game = Game
 
 
