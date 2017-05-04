@@ -1,71 +1,85 @@
-import GameBoard
-import Player
 import socket
 import sys
 
-help_menu = 'login [name]       Log into TicTacToe with username <name>\n' +
-            'place [1-9]        Place piece on box <1-9> during your turn\n' +
-            'exit               Exits TicTacToe ending current game\n' + 
-            'games              Display list of ongoing games and info\n' +
-            'who                Display list of available players\n' +
-            'play [name]        Challenge player <name>\n' +
-            'observe [gameid]   Observe game <gameid>\n' +
-            'unobserve [gameid] Stop observing game <gameid>'
+help_menu = ("login [name]       Log into TicTacToe with username <name>\n"
+             "place [1-9]        Place piece on box <1-9> during your turn\n"
+             "exit               Exits TicTacToe ending current game\n"
+             "games              Display list of ongoing games and info\n"
+             "who                Display list of available players\n"
+             "play [name]        Challenge player <name>\n"
+             "observe [gameid]   Observe game <gameid>\n"
+             "unobserve [gameid] Stop observing game <gameid>")
 
 host = sys.argv[1]
 port = int(sys.argv[2])
 
-clientSocket = socket(AF_INET, SOCK_STREAM)
+clientSocket = socket(socket.AF_INET, socket.SOCK_STREAM)
 clientSocket.connect(host, port)
 
-while(1):
-    command = raw_input("Enter a command: ")
-    check_command(command)
+
+def main():
+    while(1):
+        command = raw_input("Enter a command: ")
+        check_command(command)
+    return 0
+
+if __name__ == '__main__':
+    main()
+
 
 def print_help():
-    return print(help_menu)
+    print(help_menu)
+
 
 def login(name):
     clientSocket.send("login " + name)
     response = clientSocket.recv(1024)
     print("Server: "+response)
 
+
 def place(pos):
     clientSocket.send("place " + pos)
     response = clientSocket.recv(1024)
     print("Server: "+response)
-    
+
+
 def games():
     clientSocket.send("games")
     response = clientSocket.recv(1024)
     print("Server: "+response)
+
 
 def who():
     clientSocket.send("who")
     response = clientSocket.recv(1024)
     print("Server: "+response)
 
+
 def play(name):
     clientSocket.send("play " + name)
     response = clientSocket.recv(1024)
     print("Server: "+response)
 
+
 def observe(gameID):
     clientSocket.send("observe " + gameID)
     response = clientSocket.recv(1024)
     print("Server: "+response)
-    
+
+
 def unobserve(gameID):
     clientSocket.send("unobserve " + gameID)
     response = clientSocket.recv(1024)
     print("Server: "+response)
 
+
 def exit_server():
     clientSocket.send("exit")
     response = clientSocket.recv(1024)
-    print("Server: "+response)    
+    print("Server: "+response)
     exit()
-    
+
+
 def check_command(command):
     command = command.split()
     if len(command) == 1:
@@ -75,7 +89,7 @@ def check_command(command):
             games()
         elif command[0] == "who":
             who()
-        elif command[0] == "exit"
+        elif command[0] == "exit":
             exit_server()
         else:
             print("Unsupported command")
@@ -93,5 +107,4 @@ def check_command(command):
         else:
             print("Unsupported command")
     else:
-        print("Unsupported command") 
-                   
+        print("Unsupported command")
