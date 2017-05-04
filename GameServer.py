@@ -75,6 +75,9 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
 
 
 
+    def notify_player(msg):
+        self.request.sendall(msg)
+
 
 def __exit(code):
     if (code == 1):
