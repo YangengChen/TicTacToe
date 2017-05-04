@@ -26,13 +26,17 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
 
     # Handler for connection request to server
     def handle(self):
-        self.input = self.request.recv(1024).strip()
-        self.request.sendall('200 OK')
-        try:
-            resp = self.handle_command(self.input)
-            self.request.sendall(resp)
-        except Exception, msg:
-            self.request.sendall(msg.args[1])
+        print('START');
+        while(1):
+            self.input = self.request.recv(1024).decode().strip()
+            self.request.sendall(('200 OK').encode())
+            try:
+                resp = self.handle_command(self.input)
+                self.request.sendall(resp.encode())
+                print('GOOD SHIT')
+            except Exception as msg:
+                print('BAD SHIT')
+                self.request.sendall((msg.args[0]).encode())
 
     def handle_command(self, comm):
         commands = comm.split(" ")

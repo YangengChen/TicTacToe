@@ -47,11 +47,11 @@ def main(argv):
     clientSocket.connect((host, port))
 
     while(1):
-        command = raw_input('ttt> ')
+        command = input('ttt> ')
         if (check_command(command)):
-            clientSocket.send(command)
+            clientSocket.send(command.encode())
             response = clientSocket.recv(1024)
-            print("Server: "+response)
+            print("Server: "+response.decode())
         else:
             print('Unsupported command.')
     return 0
