@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="53635051-f5c4-46b6-9307-cbf892adbc8a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameClient.py" afterPath="$PROJECT_DIR$/GameClient.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameServer.py" afterPath="$PROJECT_DIR$/GameServer.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,8 +17,8 @@
       <file leaf-file-name="GameServer.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GameServer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="43" column="43" lean-forward="true" selection-start-line="43" selection-start-column="43" selection-end-line="43" selection-end-column="43" />
+            <state relative-caret-position="150">
+              <caret line="45" column="43" lean-forward="true" selection-start-line="45" selection-start-column="43" selection-end-line="45" selection-end-column="43" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -271,8 +270,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GameServer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="43" column="43" lean-forward="true" selection-start-line="43" selection-start-column="43" selection-end-line="43" selection-end-column="43" />
+        <state relative-caret-position="150">
+          <caret line="45" column="43" lean-forward="true" selection-start-line="45" selection-start-column="43" selection-end-line="45" selection-end-column="43" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>

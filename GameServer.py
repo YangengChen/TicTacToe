@@ -1,4 +1,5 @@
-from threading import Thread
+#from threading import Thread
+import threading
 import Game
 import Player
 import socketserver
@@ -21,6 +22,8 @@ help_menu = ('login [name]       Log into TicTacToe with username <name>\n'
 
 usage = 'Usage:\npython GameServer.py [single, multiple]'
 
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    pass
 
 class GameTCPHandler(socketserver.BaseRequestHandler):
 
@@ -109,9 +112,11 @@ def main(argv):
         return 1
 
     # Create server and loop
-    server = socketserver.TCPServer((HOST, PORT), GameTCPHandler)
-    server.serve_forever()
-
+    #server = socketserver.TCPServer((HOST, PORT), GameTCPHandler)
+    #server.serve_forever()
+    server = ThreadedTCPServer((HOST, PORT), GameTCPHandler)
+    server_thread = threading.Thread(target=server.serve_forever)
+    server_thread.start()
 
 if __name__ == '__main__':
     main(sys.argv)
