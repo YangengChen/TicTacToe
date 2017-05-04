@@ -42,22 +42,27 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
         	return avail;
 
         elif (commands[0] == 'play'):
-        	#implement play
+        	play(commands[1])
+
+        elif (commands[0] == 'place'):
+        	place(commands[1])
+
         else:
         	return help()
 
     def print_games():
     	gameString = '';
     	for game in games:
-    		gameString += 'Game Id: '+
+    		gameString += 'Game Id: '+self.game.gameid+
     		 				'\tPlayer 1: '+game.player1.name+'\n'
     		 				'\tPlayer 2: '+game.player2.name+'\n'
 
     	return gameString
 
-    def create_player(name):
+    def create_player(name,self):
     	player = Player(name)
     	available_players.append(player)
+    	self.curr_player = player
 
 
 	def help():
@@ -66,14 +71,14 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
     def play(other_player):
     	if any(player.name == other_player for player in available_players)
     		player2 = next((player for player in available_players if player.name == other_player), None)
-    		new_game = Game
-
-
+    		new_game = Game(len(games),self.curr_player,player2)
+    		games.append(new_game)
+    		self.game = new_game
     	else:
     		return 'Player not available to play'
 
-
-
+    def place(n):
+    	self.game.place(self.curr_player,n)
 
     def notify_player(msg):
         self.request.sendall(msg)
