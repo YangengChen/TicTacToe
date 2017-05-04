@@ -1,7 +1,8 @@
 #from threading import Thread
 import threading
-import Game
-import Player
+from Game import Game
+from Player import Player
+import json
 import socketserver
 import sys
 
@@ -32,14 +33,16 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
         print('START');
         while(1):
             self.input = self.request.recv(1024).decode().strip()
-            self.request.sendall(('200 OK').encode())
+            #self.request.sendall(('200 OK').encode())
             try:
                 resp = self.handle_command(self.input)
-                self.request.sendall(resp.encode())
+                jsonStr = self.encode_json('200 OK', resp)
+                self.request.sendall(jsonStr.encode())
                 print('GOOD SHIT')
             except Exception as msg:
                 print('BAD SHIT')
-                self.request.sendall((msg.args[0]).encode())
+                err_json = self.encode_json('400 ERROR', msg.args[0])
+                self.request.sendall(err_json.encode())
 
     def handle_command(self, comm):
         commands = comm.split(" ")
@@ -75,8 +78,8 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
 
         return gameString
 
-    def create_player(name, self):
-        player = Player(name)
+    def create_player(self,name):
+        player = Player(name,self)
         available_players.append(player)
         self.curr_player = player
 
@@ -99,12 +102,16 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
     def notify_player(self, msg):
         self.request.sendall(msg)
 
+    def encode_json(self, status, content):
+        obj = {'status': status, 'content': content}
+        return json.dumps(obj)
+
+
 
 def __exit(code):
     if (code == 1):
         print(help_menu)
     exit(code)
-
 
 def main(argv):
     if (len(argv) != 2):

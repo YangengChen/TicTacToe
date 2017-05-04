@@ -1,4 +1,5 @@
 from socket import *
+import json
 import sys
 
 usage = 'Usage:\npython GameClient.py [host] [port]'
@@ -51,7 +52,9 @@ def main(argv):
         if (check_command(command)):
             clientSocket.send(command.encode())
             response = clientSocket.recv(1024)
-            print("Server: "+response.decode())
+            responseObj = json.loads(response.decode())
+            print("Status: "+ responseObj['status'])
+            print("Server: "+ responseObj['content'])
         else:
             print('Unsupported command.')
     return 0
