@@ -1,19 +1,28 @@
 from threading import Thread
+import socketserver
 import sys
 
 HOST, PORT = "localhost", 12000
 mode = ''
 
-games
+games = []
+available_players = []
+busy_players = []
 
 class GameTCPHandler(socketserver.BaseRequestHandler):
 
-    # Handler for connection request to server 
+    # Handler for connection request to server
     def handle(self):
         self.input = self.request.recv(1024).strip()
-        response = handle_input(self.input)
+        response = handle_command(self.input)
         if (response is not None):
             self.request.sendall(response)
+
+    def handle_command(comm):
+        if (comm == 'games'):
+        elif (comm == 'who'):
+        elif (comm == 'play'):
+        else:
 
 
 def __exit(code):
