@@ -9,8 +9,8 @@ class Game:
         self.player2 = player2
         self.board = GameBoard()
         self.spectators = []
-        self.player1.start_game(self.board, 'X', )
-        self.player2.start_game(self.board, 'O')
+        self.player1.start_game(self.board, 'X', player2.name)
+        self.player2.start_game(self.board, 'O', player1.name)
 
     def add_spectator(self, spectator):
         self.spectators.append(spectator)
