@@ -12,8 +12,11 @@ class Game:
         self.player1.start_game(self.board, 'X', )
         self.player2.start_game(self.board, 'O')
 
-    def add_spectator(spectator):
+    def add_spectator(self, spectator):
         self.spectators.append(spectator)
+
+    def remove_spectator(self, spectator):
+        self.spectators.pop(spectator)
 
     def place(self, player, n):
         # Check who is trying to place
@@ -40,22 +43,35 @@ class Game:
         if (gamestate is None):  # Still playing
             currplayer.remove_turn()
             otherplayer.give_turn()
-            currplayer.notify(self.get_board())
-            otherplayer.notify(self.get_board())
+            self.notify_all()
         elif (gamestate == 'draw'):
-            self.end_game(currplayer, otherplayer, True, )
+            self.end_game(currplayer, otherplayer, draw=True)
         elif (gamestate == currplayer.piece):  # Winner
-            self.end_game(currplayer, otherplayer, False)
+            self.end_game(currplayer, otherplayer)
 
-    def notify_players():
-        
+    def notify_all(self, msg=None):
+        if (msg is None):
+            msg = self.get_board()
+        for spectator in self.spectators:
+            spectator.notify(msg)
+        self.player1.notify(msg)
+        self.player2.notify(msg)
 
-    def end_game(self, winner, loser, draw, abandoned):
+    def leave_game(self, leaver):
+        if (leaver == self.player1):
+            otherplayer = self.player1
+        else:
+            otherplayer = self.player2
+        leaver.end_game()
+        otherplayer.end_game()
+        self.notify_all(leaver.name + ' has left the game.')
+
+    def end_game(self, winner, loser, draw=None):
         # Update player state
         winner.end_game()
         loser.end_game()
         # Notify players of games conclusion
-        if (draw):
+        if (draw is not None):
             winner.notify('The game ends in a draw.')
             loser.notify('The game ends in a draw.')
         else:
