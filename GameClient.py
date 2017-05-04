@@ -1,4 +1,4 @@
-import socket
+from socket import *
 import sys
 
 help_menu = ("login [name]       Log into TicTacToe with username <name>\n"
@@ -9,22 +9,6 @@ help_menu = ("login [name]       Log into TicTacToe with username <name>\n"
              "play [name]        Challenge player <name>\n"
              "observe [gameid]   Observe game <gameid>\n"
              "unobserve [gameid] Stop observing game <gameid>")
-
-host = sys.argv[1]
-port = int(sys.argv[2])
-
-clientSocket = socket(socket.AF_INET, socket.SOCK_STREAM)
-clientSocket.connect(host, port)
-
-
-def main():
-    while(1):
-        command = raw_input("Enter a command: ")
-        check_command(command)
-    return 0
-
-if __name__ == '__main__':
-    main()
 
 
 def print_help():
@@ -108,3 +92,23 @@ def check_command(command):
             print("Unsupported command")
     else:
         print("Unsupported command")
+
+
+def main(argv):
+    if (len(argv) != 3):
+        print_help()
+        return 1
+
+    host = argv[1]
+    port = int(argv[2])
+    clientSocket = socket(AF_INET, SOCK_STREAM)
+    clientSocket.connect((host, port))
+
+    while(1):
+        command = raw_input("Enter a command: ")
+        check_command(command)
+    return 0
+
+
+if __name__ == '__main__':
+    main(sys.argv)
