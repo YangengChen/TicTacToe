@@ -34,10 +34,14 @@ class GameBoard:
         # Draw found
         return 'draw'
 
-    def to_string(self):
-        display = ''
+    def to_string(self): ## BETTER WAY TO PRINT THIS?
+        print(self.board[0][1])
+        display = '\n'
         for i in range(0, 3):
             for j in range(0, 3):
-                display.join(self.board[i][j])
-                display.join('\n')
+                display+= self.board[i][j]
+                display+= ' '
+                #display.join(self.board[i][j])
+                #display.join('\n')
+            display+='\n'
         return display

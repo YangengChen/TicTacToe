@@ -33,14 +33,12 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
         print('START');
         while(1):
             self.input = self.request.recv(1024).decode().strip()
-            #self.request.sendall(('200 OK').encode())
             try:
                 resp = self.handle_command(self.input)
+                print('response '+resp)
                 jsonStr = self.encode_json('200 OK', resp)
                 self.request.sendall(jsonStr.encode())
-                print('GOOD SHIT')
             except Exception as msg:
-                print('BAD SHIT')
                 err_json = self.encode_json('400 ERROR', msg.args[0])
                 self.request.sendall(err_json.encode())
 
@@ -57,7 +55,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             global available_players
             avail = ''
             for player in available_players:
-                avail = avail.join(player.name + ' ')
+                avail += player.name + ' '
             return avail
 
         elif (commands[0] == 'play'):
@@ -65,7 +63,10 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
 
         elif (commands[0] == 'place'):
             self.place(commands[1])
-
+            # wait for player to get turn back
+            while(not self.curr_player.has_turn):
+                pass
+            return self.game.get_board()
         else:
             return help()
 
@@ -80,10 +81,11 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
 
     def create_player(self,name):
         player = Player(name,self)
+        global available_players
         available_players.append(player)
         self.curr_player = player
 
-    def help():
+    def help(self):
         print(help_menu)
 
     def play(self, other_player):
@@ -93,20 +95,21 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             new_game = Game(len(games), self.curr_player, player2)
             games.append(new_game)
             self.game = new_game
+            player2.tcphandler.game = new_game # just added, better way to do this?
+            return 'Game started with '+other_player
         else:
             return 'Player not available to play'
 
     def place(self, n):
         self.game.place(self.curr_player, n)
 
-    def notify_player(self, msg):
-        self.request.sendall(msg)
+    def notify_player(self, msg): # notify player is kinda iffy right now so lets fix later
+        pass
+        #self.request.sendall(self.encode_json('200 OK',msg).encode())
 
     def encode_json(self, status, content):
         obj = {'status': status, 'content': content}
         return json.dumps(obj)
-
-
 
 def __exit(code):
     if (code == 1):

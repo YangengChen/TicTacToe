@@ -1,4 +1,4 @@
-import GameBoard
+from GameBoard import GameBoard
 
 
 class Game:
@@ -33,14 +33,12 @@ class Game:
         n = int(n)
         if (n < 1 or n > 9):
             raise Exception('Invalid position ' + str(n))
-
         # Make move and update game state
-        x = n / 3
-        y = n % 3
-        gamestate = self.board.place(self.piece, x, y)
-
+        x = int(n / 3)
+        y = int(n % 3)
+        gamestate = self.board.place(currplayer.piece, x, y)
         # Switch turns and notify players of changes
-        if (gamestate is None):  # Still playing
+        if (gamestate is None or gamestate == '.'):  # Still playing ---->>> SHOULD THIS ALSO CHECK IF GAMESTATE = '.' ????
             currplayer.remove_turn()
             otherplayer.give_turn()
             self.notify_all()
@@ -79,4 +77,4 @@ class Game:
             loser.notify('You lose.')
 
     def get_board(self):
-        return self.board.toString()
+        return self.board.to_string()

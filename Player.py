@@ -8,11 +8,12 @@ class Player:
         self.losses = 0
         self.draws = 0
 
-    def start_game(self, piece, opponentname):
+    def start_game(self, board, piece, opponentname):
         self.state = 'busy'
+        self.board = board
         self.piece = piece
         self.has_turn = (piece == 'X')
-        self.notify('Starting game against ' + opponentname)
+        #self.notify('Starting game against ' + opponentname)
 
     def end_game(self):
         self.board = None
