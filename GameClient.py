@@ -16,8 +16,8 @@ def print_resp(resp_json):
 def place(command):
     # Send place request
     global clientSocket
-    clientSocket.send(command).encode()
-    resp = clientSocket.recv(1024)
+    clientSocket.send((command[0] + ' ' + command[1]).encode())
+    resp = clientSocket.recv(1024).decode()
     resp_json = json.loads(resp)
     print_resp(resp_json)
     if (resp_json['status'] == 'ERROR'):
@@ -26,7 +26,7 @@ def place(command):
     # Continue to send for opponent's move or game end
     while (1):
         sleep(1)
-        clientSocket.send('update')
+        clientSocket.send(('update').encode())
         update = clientSocket.recv(1024).decode()
         update_json = json.loads(update)
         # Check if board has changed
@@ -50,6 +50,7 @@ def check_command(command):
         if command[0] == "login":
             return True
         elif command[0] == "place":
+            place(command)
             return False
         elif command[0] == "play":
             return True
