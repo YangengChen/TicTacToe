@@ -72,7 +72,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             return self.place(commands[1])
 
         elif (commands[0] == 'update'):
-            if (self.game.status != commands[1]):
+            if ('update ' + self.game.status != comm):
                 return self.game.status
             else:
                 raise Exception('No update')
