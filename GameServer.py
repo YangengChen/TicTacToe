@@ -51,8 +51,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
     def handle_command(self, comm):
         commands = comm.split(" ")
         if(commands[0] == 'login'):
-            self.create_player(commands[1])
-            return 'Logged in as ' + commands[1]
+            return self.create_player(commands[1])
 
         elif (commands[0] == 'games'):
             return self.print_games()
@@ -88,10 +87,14 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
 
     # Create new player object for new login
     def create_player(self, name):
-        player = Player(name, self)
         global available_players
+        for player in available_players:
+            if player.name == name:
+                return "Player " + name + " already exists."
+        player = Player(name, self)
         available_players.append(player)
         self.curr_player = player
+        return "Logged in as " + name
 
     # Print help menu
     def help(self):
@@ -103,11 +106,14 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
         if any(player.name == other_player for player in available_players):
             player2 = next((player for player in available_players
                             if player.name == other_player), None)
-            # Start new game with player
-            new_game = Game(len(games), self.curr_player, player2)
-            games.append(new_game)
-            self.game = new_game
-            return 'Game started with ' + other_player
+            # Check if same player, if not start new game
+            if self.curr_player is not player2:
+                new_game = Game(len(games), self.curr_player, player2)
+                games.append(new_game)
+                self.game = new_game
+                return 'Game started with ' + other_player
+            else:
+                return 'Cannot start game with same player'
         else:
             return 'Player not available to play'
 
