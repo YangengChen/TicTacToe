@@ -72,8 +72,15 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             self.place(commands[1])
             return self.game.get_board()
 
+        elif (commands[0] == 'update'):
+            if (self.curr_player.has_turn):
+                return self.game.get_board()
+            else:
+                raise Exception('No update')
+
         elif (commands[0] == 'exit'):
             return 'Exiting TicTacToe...'
+
         else:
             return help_menu
 

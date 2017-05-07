@@ -20,7 +20,7 @@ class GameBoard:
                 (self.board[0][i] != '.' and
                 self.board[0][i] == self.board[1][i] and
                  self.board[0][i] == self.board[2][i])):
-                return self.board[i][0]
+                return 'win'
 
         # Check diagonals
         if (self.board[1][1] != '.' and
@@ -28,7 +28,7 @@ class GameBoard:
               self.board[0][0] == self.board[2][2]) or
              (self.board[0][2] == self.board[1][1] and
               self.board[0][2] == self.board[2][0]))):
-            return self.board[0][0]
+            return 'win'
 
         # Check draw
         for i in range(3):
