@@ -37,8 +37,8 @@ class Game:
         if (n < 1 or n > 9):
             raise Exception('Invalid position ' + str(n))
         # Make move and update game state
-        x = int(n / 3)
-        y = int(n % 3)
+        x = int((n - 1) / 3)
+        y = int((n - (x * 3)) - 1)
         gamestate = self.board.place(currplayer.piece, x, y)
         # Switch turns and notify players of changes
         if (gamestate is None):  # Still playing
