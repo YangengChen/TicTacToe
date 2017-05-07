@@ -69,8 +69,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             return self.play(commands[1])
 
         elif (commands[0] == 'place'):
-            self.place(commands[1])
-            return self.game.get_board()
+            return self.place(commands[1])
 
         elif (commands[0] == 'update'):
             if (self.curr_player.has_turn):
@@ -140,7 +139,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
 
     # Attempt to place piece at location n
     def place(self, n):
-        self.game.place(self.curr_player, n)
+        return self.game.place(self.curr_player, n)
 
     # Encode the response to player in json
     def encode_json(self, status, content):

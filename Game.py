@@ -50,19 +50,13 @@ class Game:
         if (gamestate is None):  # Still playing
             currplayer.remove_turn()
             otherplayer.give_turn()
-            # self.notify_all()
-        elif (gamestate == 'draw'): # Draw
+            return self.get_board()
+        elif (gamestate == 'draw'):  # Draw
             self.end_game(currplayer, otherplayer, draw=True)
+            return 'The game ends in a draw.'
         elif (gamestate == 'win'):  # Winner
             self.end_game(currplayer, otherplayer)
-
-    def notify_all(self, msg=None):
-        if (msg is None):
-            msg = self.get_board()
-        for spectator in self.spectators:
-            spectator.notify(msg)
-        self.player1.notify(msg)
-        self.player2.notify(msg)
+            return 'You win.'
 
     def leave_game(self, leaver):
         if (leaver == self.player1):
@@ -77,13 +71,6 @@ class Game:
         # Update player state
         winner.end_game('win')
         loser.end_game('lose')
-        # Notify players of games conclusion
-        # if (draw is not None):
-        #    winner.notify('The game ends in a draw.')
-        #    loser.notify('The game ends in a draw.')
-        # else:
-        #    winner.notify('You win.')
-        #    loser.notify('You lose.')
 
     def get_board(self):
         return self.board.to_string()
