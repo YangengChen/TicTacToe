@@ -29,7 +29,7 @@ def place(command):
     # Continue to send for opponent's move or game end
     while (1):
         sleep(1)
-        clientSocket.send(('update').encode())
+        clientSocket.send(('update ' + gameboard).encode())
         update = clientSocket.recv(1024).decode()
         update_json = json.loads(update)
         # Check if board has changed
