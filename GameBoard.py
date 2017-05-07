@@ -6,7 +6,7 @@ class GameBoard:
     def place(self, piece, x, y):
         if (self.board[x][y] != '.'):
             raise Exception('Position already used')
-
+        
         self.board[x][y] = piece
         return self.check_win()
 
@@ -33,7 +33,7 @@ class GameBoard:
         # Check draw
         for i in range(3):
             for j in range(3):
-                if (self.board[i][j] != '.'):
+                if (self.board[i][j] == '.'):
                     return None
 
         # Draw found

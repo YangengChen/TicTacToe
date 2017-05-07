@@ -53,7 +53,7 @@ class Game:
             self.notify_all()
         elif (gamestate == 'draw'): # Draw
             self.end_game(currplayer, otherplayer, draw=True)
-        elif (gamestate == currplayer.piece):  # Winner
+        elif (gamestate == 'win'):  # Winner
             self.end_game(currplayer, otherplayer)
 
     def notify_all(self, msg=None):
