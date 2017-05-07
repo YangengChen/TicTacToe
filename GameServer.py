@@ -42,10 +42,14 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
                 # Send encoded response to player in json
                 resp_json = self.encode_json('200 OK', resp)
                 self.request.sendall(resp_json.encode())
+                if (resp == 'Exiting TicTacToe'):
+                    break
             except Exception as msg:
                 # Something went wrong, send error message to player
                 err_json = self.encode_json('400 ERROR', msg.args[0])
                 self.request.sendall(err_json.encode())
+            # Player exiting
+            return 0
 
     # Checks input and calls related functionality
     def handle_command(self, comm):
@@ -57,7 +61,6 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             return self.print_games()
 
         elif (commands[0] == 'who'):
-
             return self.print_players()
 
         elif (commands[0] == 'play'):
@@ -69,6 +72,8 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             while(not self.curr_player.has_turn):
                 pass
             return self.game.get_board()
+        elif (commands[0] == 'exit'):
+            return 'Exiting TicTacToe...'
         else:
             return help()
 
@@ -135,12 +140,6 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
     def encode_json(self, status, content):
         obj = {'status': status, 'content': content}
         return json.dumps(obj)
-
-
-def __exit(code):
-    if (code == 1):
-        print(help_menu)
-    exit(code)
 
 
 def main(argv):
