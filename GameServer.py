@@ -121,6 +121,14 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
         else:
             busy_players.remove(self.curr_player)
 
+    def set_busy(self, player1, player2):
+        global available_players
+        global busy_players
+        available_players.remove(player1)
+        available_players.remove(player2)
+        busy_players.append(player1)
+        busy_players.append(player2)
+
     # Challenge player to a game
     def play(self, other_player):
         # Check if player is available
@@ -131,6 +139,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             if self.curr_player is not player2:
                 new_game = Game(len(games), self.curr_player, player2)
                 games.append(new_game)
+                self.set_busy(self.curr_player, player2)
                 return 'Game started with ' + other_player
             else:
                 return 'Cannot start game with same player'
