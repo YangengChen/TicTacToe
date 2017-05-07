@@ -33,7 +33,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
         print('START')
         while(1):
             # Accept request from player
-            self.input = self.request.recv(1024).decode().strip()
+            self.input = self.request.recv(1024).decode()
             try:
                 # Handle command
                 print(self.input)
@@ -71,7 +71,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             return self.place(commands[1])
 
         elif (commands[0] == 'update'):
-            if ('update ' + self.game.status != comm):
+            if (('update ' + self.game.status) != comm or self.game.game_over is True):
                 return self.game.status
             else:
                 raise Exception('No update')
