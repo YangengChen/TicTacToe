@@ -70,14 +70,12 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
 
         elif (commands[0] == 'place'):
             self.place(commands[1])
-            # wait for player to get turn back
-            while(not self.curr_player.has_turn):
-                pass
             return self.game.get_board()
+
         elif (commands[0] == 'exit'):
             return 'Exiting TicTacToe...'
         else:
-            return self.help()
+            return help_menu
 
     # Print list of current games
     def print_games(self):
@@ -116,10 +114,6 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             available_players.remove(self.curr_player)
         else:
             busy_players.remove(self.curr_player)
-
-    # Print help menu
-    def help(self):
-        print(help_menu)
 
     # Challenge player to a game
     def play(self, other_player):

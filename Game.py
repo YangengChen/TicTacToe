@@ -25,6 +25,8 @@ class Game:
     # Attempt to place player's piece at n
     def place(self, player, n):
         # Check who is trying to place
+        currplayer = None
+        otherplayer = None
         if (player == self.player1):
             currplayer = self.player1
             otherplayer = self.player2
