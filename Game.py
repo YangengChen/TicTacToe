@@ -5,6 +5,7 @@ class Game:
 
     def __init__(self, gameid, player1, player2):
         self.gameid = gameid
+        self.game_over = False
         self.player1 = player1
         self.player2 = player2
         self.board = GameBoard()
@@ -76,3 +77,4 @@ class Game:
             self.status = winner.name + ' wins the game.'
         else:
             self.status = 'The game ends in a draw'
+        self.game_over = True
