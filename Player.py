@@ -17,9 +17,15 @@ class Player:
         #self.notify('Starting game against ' + opponentname)
 
     # Set player state to no game
-    def end_game(self):
+    def end_game(self, outcome):
         self.board = None
         self.state = 'available'
+        if outcome == "win":
+            self.wins += 1
+        elif outcome == "lose":
+            self.losses += 1
+        else:
+            self.draws += 1
 
     # Set player as having turn
     def give_turn(self):
