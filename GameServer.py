@@ -72,8 +72,8 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             return self.place(commands[1])
 
         elif (commands[0] == 'update'):
-            if (self.curr_player.has_turn):
-                return self.game.get_board()
+            if (self.game.status != commands[1]):
+                return self.game.status
             else:
                 raise Exception('No update')
 
@@ -153,8 +153,6 @@ def main(argv):
         return 1
 
     # Create server and loop
-    # server = socketserver.TCPServer((HOST, PORT), GameTCPHandler)
-    # server.serve_forever()
     server = ThreadedTCPServer((HOST, PORT), GameTCPHandler)
     server_thread = threading.Thread(target=server.serve_forever)
     server_thread.start()

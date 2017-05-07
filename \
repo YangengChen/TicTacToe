@@ -9,7 +9,7 @@ class Game:
         self.player2 = player2
         self.board = GameBoard()
         self.spectators = []
-        self.status = self.board.to_string()
+        self.status = 'in progress'
         self.player1.tcphandler.game = self
         self.player2.tcphandler.game = self
         self.player1.start_game(self.board, 'X', player2.name)
@@ -51,12 +51,13 @@ class Game:
         if (gamestate is None):  # Still playing
             currplayer.remove_turn()
             otherplayer.give_turn()
-            self.status = self.board.to_string()
+            return self.get_board()
         elif (gamestate == 'draw'):  # Draw
             self.end_game(currplayer, otherplayer, draw=True)
+            return 'The game ends in a draw.'
         elif (gamestate == 'win'):  # Winner
             self.end_game(currplayer, otherplayer)
-        return self.status
+            return 'You win.'
 
     def leave_game(self, leaver):
         if (leaver == self.player1):
@@ -72,7 +73,7 @@ class Game:
         winner.end_game('win')
         loser.end_game('lose')
         # Update game state
-        if (draw is None):
-            self.status = winner.name + ' wins the game.'
-        else:
-            self.status = 'The game ends in a draw'
+        self.status = winner.name + ' wins the game.'
+
+    def get_board(self):
+        return self.board.to_string()
