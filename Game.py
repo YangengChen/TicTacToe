@@ -12,12 +12,15 @@ class Game:
         self.player1.start_game(self.board, 'X', player2.name)
         self.player2.start_game(self.board, 'O', player1.name)
 
+    # Adds spectator to game
     def add_spectator(self, spectator):
         self.spectators.append(spectator)
 
+    # Remove spectator from game
     def remove_spectator(self, spectator):
         self.spectators.pop(spectator)
 
+    # Attempt to place player's piece at n
     def place(self, player, n):
         # Check who is trying to place
         if (player == self.player1):
@@ -38,7 +41,7 @@ class Game:
         y = int(n % 3)
         gamestate = self.board.place(currplayer.piece, x, y)
         # Switch turns and notify players of changes
-        if (gamestate is None or gamestate == '.'):  # Still playing ---->>> SHOULD THIS ALSO CHECK IF GAMESTATE = '.' ????
+        if (gamestate is None):  # Still playing
             currplayer.remove_turn()
             otherplayer.give_turn()
             self.notify_all()

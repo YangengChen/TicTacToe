@@ -2,13 +2,15 @@ class GameBoard:
     def __init__(self):
         self.board = [['.' for x in range(3)] for y in range(3)]
 
+    # Attempt to place piece at position x, y
     def place(self, piece, x, y):
         if (self.board[x][y] != '.'):
             raise Exception('Position already used')
-
+        
         self.board[x][y] = piece
         return self.check_win()
 
+    # Check to see if the board contains a win
     def check_win(self):
         # Check rows and columns
         for i in range(3):
@@ -34,14 +36,13 @@ class GameBoard:
         # Draw found
         return 'draw'
 
-    def to_string(self): ## BETTER WAY TO PRINT THIS?
+    # Create string of the board
+    def to_string(self):
         print(self.board[0][1])
         display = '\n'
         for i in range(0, 3):
             for j in range(0, 3):
-                display+= self.board[i][j]
-                display+= ' '
-                #display.join(self.board[i][j])
-                #display.join('\n')
-            display+='\n'
+                display += self.board[i][j]
+                display += ' '
+            display += '\n'
         return display
