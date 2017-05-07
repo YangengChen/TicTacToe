@@ -1,6 +1,6 @@
 import threading
-import Game
-import Player
+from Game import Game
+from Player import Player
 import json
 import socketserver
 import sys
@@ -48,8 +48,8 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
                 # Something went wrong, send error message to player
                 err_json = self.encode_json('400 ERROR', str(msg.args))
                 self.request.sendall(err_json.encode())
-            # Player exiting
-            return 0
+        # Player exiting
+        return 0
 
     # Checks input and calls related functionality
     def handle_command(self, comm):
@@ -93,7 +93,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
         global available_players
         avail = 'Available Players: \n'
         for player in available_players:
-            avail += player.name + '\n'
+            avail += player.name + ' '
         return avail
 
     # Create new player object for new login
