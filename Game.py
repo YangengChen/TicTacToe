@@ -69,8 +69,8 @@ class Game:
 
     def end_game(self, winner, loser, draw=None):
         # Update player state
-        winner.end_game()
-        loser.end_game()
+        winner.end_game('win')
+        loser.end_game('lose')
         # Notify players of games conclusion
         if (draw is not None):
             winner.notify('The game ends in a draw.')
