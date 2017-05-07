@@ -5,13 +5,6 @@ import sys
 usage = 'Usage:\npython GameClient.py [host] [port]'
 
 
-def exit_server():
-    clientSocket.send("exit")
-    response = clientSocket.recv(1024)
-    print("Server: "+response)
-    exit()
-
-
 def check_command(command):
     command = command.split()
     if len(command) == 1:
@@ -22,7 +15,7 @@ def check_command(command):
         elif command[0] == "who":
             return True
         elif command[0] == "exit":
-            exit_server()
+            return True
     elif len(command) == 2:
         if command[0] == "login":
             return True
@@ -53,8 +46,10 @@ def main(argv):
             clientSocket.send(command.encode())
             response = clientSocket.recv(1024)
             responseObj = json.loads(response.decode())
-            print("Status: "+ responseObj['status'])
-            print("Server: "+ responseObj['content'])
+            print("Status: " + responseObj['status'])
+            print("Server: " + responseObj['content'])
+            if (command == 'exit'):
+                break
         else:
             print('Unsupported command.')
     return 0
