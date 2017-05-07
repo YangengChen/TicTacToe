@@ -25,7 +25,7 @@ def place(command):
         return
     global gamestatus
     gamestatus = resp_json['content']
-
+    
     # Continue to send for opponent's move or game end
     while (1):
         sleep(1)

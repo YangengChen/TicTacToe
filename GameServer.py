@@ -8,8 +8,7 @@ import sys
 HOST, PORT = "localhost", 12000
 
 games = []
-available_players = []
-busy_players = []
+players = []
 
 help_menu = ('login [name]       Log into TicTacToe with username <name>\n'
              'place [1-9]        Place piece on box <1-9> during your turn\n'
@@ -95,51 +94,39 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
 
     # Print list of available players
     def print_players(self):
-        global available_players
+        global players
         avail = 'Available Players: \n'
-        for player in available_players:
-            avail += player.name + ' '
+        for player in players:
+            if (player.state == 'available'):
+                avail += player.name + ' '
         return avail
 
     # Create new player object for new login
     def create_player(self, name):
-        global available_players
-        for player in available_players:
+        for player in players:
             if player.name == name:
                 return "Player " + name + " already exists."
         player = Player(name, self)
-        available_players.append(player)
+        players.append(player)
         self.curr_player = player
         return "Logged in as " + name
 
     # Remove player from records
     def player_exit(self):
-        global available_players
-        global busy_players
-        if (self.curr_player in available_players):
-            available_players.remove(self.curr_player)
-        else:
-            busy_players.remove(self.curr_player)
-
-    def set_busy(self, player1, player2):
-        global available_players
-        global busy_players
-        available_players.remove(player1)
-        available_players.remove(player2)
-        busy_players.append(player1)
-        busy_players.append(player2)
+        global players
+        players.remove(self.curr_player)
 
     # Challenge player to a game
     def play(self, other_player):
         # Check if player is available
-        if any(player.name == other_player for player in available_players):
-            player2 = next((player for player in available_players
+        if any(player.name == other_player and player.state == 'available'
+               for player in players):
+            player2 = next((player for player in players
                             if player.name == other_player), None)
             # Check if same player, if not start new game
             if self.curr_player is not player2:
                 new_game = Game(len(games), self.curr_player, player2)
                 games.append(new_game)
-                self.set_busy(self.curr_player, player2)
                 return 'Game started with ' + other_player
             else:
                 return 'Cannot start game with same player'
