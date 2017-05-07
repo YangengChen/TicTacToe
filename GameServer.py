@@ -1,6 +1,6 @@
 import threading
-from Game
-from Player
+import Game
+import Player
 import json
 import socketserver
 import sys
