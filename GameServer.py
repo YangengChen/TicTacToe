@@ -37,18 +37,20 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             self.input = self.request.recv(1024).decode().strip()
             try:
                 # Handle command
+                print(self.input)
                 resp = self.handle_command(self.input)
                 print('response ' + resp)
                 # Send encoded response to player in json
                 resp_json = self.encode_json('200 OK', resp)
                 self.request.sendall(resp_json.encode())
-                if (resp == 'Exiting TicTacToe'):
+                if (resp == 'Exiting TicTacToe...'):
                     break
             except Exception as msg:
                 # Something went wrong, send error message to player
                 err_json = self.encode_json('400 ERROR', str(msg.args))
                 self.request.sendall(err_json.encode())
         # Player exiting
+        self.player_exit()
         return 0
 
     # Checks input and calls related functionality
@@ -75,7 +77,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
         elif (commands[0] == 'exit'):
             return 'Exiting TicTacToe...'
         else:
-            return help()
+            return self.help()
 
     # Print list of current games
     def print_games(self):
@@ -85,7 +87,6 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             gameString += ('Game Id: ' + str(game.gameid) +
                            '\tPlayer 1: ' + game.player1.name + '\n'
                            '\tPlayer 2: ' + game.player2.name + '\n')
-
         return gameString
 
     # Print list of available players
@@ -107,6 +108,15 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
         self.curr_player = player
         return "Logged in as " + name
 
+    # Remove player from records
+    def player_exit(self):
+        global available_players
+        global busy_players
+        if (self.curr_player in available_players):
+            available_players.remove(self.curr_player)
+        else:
+            busy_players.remove(self.curr_player)
+
     # Print help menu
     def help(self):
         print(help_menu)
@@ -121,7 +131,6 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             if self.curr_player is not player2:
                 new_game = Game(len(games), self.curr_player, player2)
                 games.append(new_game)
-                self.game = new_game
                 return 'Game started with ' + other_player
             else:
                 return 'Cannot start game with same player'
@@ -132,11 +141,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
     def place(self, n):
         self.game.place(self.curr_player, n)
 
-    # notify player is kinda iffy right now so lets fix later
-    def notify_player(self, msg):
-        pass
-        # self.request.sendall(self.encode_json('200 OK',msg).encode())
-
+    # Encode the response to player in json
     def encode_json(self, status, content):
         obj = {'status': status, 'content': content}
         return json.dumps(obj)

@@ -9,6 +9,8 @@ class Game:
         self.player2 = player2
         self.board = GameBoard()
         self.spectators = []
+        self.player1.tcphandler.game = self
+        self.okayer2.tcphandler.game = self
         self.player1.start_game(self.board, 'X', player2.name)
         self.player2.start_game(self.board, 'O', player1.name)
 
