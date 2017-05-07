@@ -57,11 +57,8 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             return self.print_games()
 
         elif (commands[0] == 'who'):
-            global available_players
-            avail = ''
-            for player in available_players:
-                avail += player.name + ' '
-            return avail
+
+            return self.print_players()
 
         elif (commands[0] == 'play'):
             return self.play(commands[1])
@@ -78,12 +75,20 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
     # Print list of current games
     def print_games(self):
         gameString = ''
+        global games
         for game in games:
-            gameString += ('Game Id: ' + self.game.gameid +
+            gameString += ('Game Id: ' + str(game.gameid) +
                            '\tPlayer 1: ' + game.player1.name + '\n'
                            '\tPlayer 2: ' + game.player2.name + '\n')
 
         return gameString
+
+    def print_players(self):
+        global available_players
+        avail = 'Available Players: \n'
+        for player in available_players:
+            avail += player.name +'\n'
+        return avail
 
     # Create new player object for new login
     def create_player(self, name):
