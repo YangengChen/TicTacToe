@@ -14,7 +14,6 @@ class Player:
         self.board = board
         self.piece = piece
         self.has_turn = (piece == 'X')
-        #self.notify('Starting game against ' + opponentname)
 
     # Set player state to no game
     def end_game(self, outcome):

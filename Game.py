@@ -36,16 +36,18 @@ class Game:
         n = int(n)
         if (n < 1 or n > 9):
             raise Exception('Invalid position ' + str(n))
+
         # Make move and update game state
         x = int((n - 1) / 3)
         y = int((n - (x * 3)) - 1)
         gamestate = self.board.place(currplayer.piece, x, y)
+
         # Switch turns and notify players of changes
         if (gamestate is None):  # Still playing
             currplayer.remove_turn()
             otherplayer.give_turn()
             self.notify_all()
-        elif (gamestate == 'draw'):
+        elif (gamestate == 'draw'): # Draw
             self.end_game(currplayer, otherplayer, draw=True)
         elif (gamestate == currplayer.piece):  # Winner
             self.end_game(currplayer, otherplayer)

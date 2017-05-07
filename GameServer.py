@@ -40,8 +40,8 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
                 resp = self.handle_command(self.input)
                 print('response ' + resp)
                 # Send encoded response to player in json
-                jsonStr = self.encode_json('200 OK', resp)
-                self.request.sendall(jsonStr.encode())
+                resp_json = self.encode_json('200 OK', resp)
+                self.request.sendall(resp_json.encode())
             except Exception as msg:
                 # Something went wrong, send error message to player
                 err_json = self.encode_json('400 ERROR', msg.args[0])
@@ -83,11 +83,12 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
 
         return gameString
 
+    # Print list of available players
     def print_players(self):
         global available_players
         avail = 'Available Players: \n'
         for player in available_players:
-            avail += player.name +'\n'
+            avail += player.name + '\n'
         return avail
 
     # Create new player object for new login
