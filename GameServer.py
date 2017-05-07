@@ -1,6 +1,6 @@
 import threading
-from Game import Game
-from Player import Player
+from Game
+from Player
 import json
 import socketserver
 import sys
@@ -46,7 +46,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
                     break
             except Exception as msg:
                 # Something went wrong, send error message to player
-                err_json = self.encode_json('400 ERROR', msg.args[0])
+                err_json = self.encode_json('400 ERROR', str(msg.args))
                 self.request.sendall(err_json.encode())
             # Player exiting
             return 0
