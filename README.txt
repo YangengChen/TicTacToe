@@ -9,6 +9,10 @@ Implements single game and multiple game TicTacToe Server and Client.
 Player connects to desired server with host and port.
 Server accepts connection requests, branches a thread for new player.
 
+Unzip project .zip file.
+For single version, use project in ./single.
+For multi version, use prokect in ./multi
+
 Player:
     GameClient.py
 
