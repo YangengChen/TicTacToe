@@ -12,7 +12,7 @@ players = []
 
 help_menu = ('login [name]       Log into TicTacToe with username <name>\n'
              'place [1-9]        Place piece on box <1-9> during your turn\n'
-             'exit               Exits TicTacToe ending current game\n'
+             'exit               Exits TicTacToe ending current game\n')
 
 usage = 'Usage:\npython GameServer.py [single, multiple]'
 
