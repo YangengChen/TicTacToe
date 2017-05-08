@@ -2,16 +2,25 @@ from socket import *
 import json
 import sys
 from time import sleep
+import threading
 
 usage = 'Usage:\npython GameClient.py [host] [port]'
 
 clientSocket = None
 gamestatus = ''
+ingame = False
+lfg = False
+lfg_thread = None
 
 
 def print_resp(resp_json):
     print('Status: ' + resp_json['status'] + '\n' +
           'Server: ' + resp_json['content'])
+
+
+def check_if_added():
+    global clientSocket
+    clientSocket.send(('').encode())
 
 
 def place(command):
@@ -25,7 +34,7 @@ def place(command):
         return
     global gamestatus
     gamestatus = resp_json['content']
-    
+
     # Continue to send for opponent's move or game end
     while (1):
         sleep(1)
@@ -73,11 +82,15 @@ def main(argv):
 
     host = argv[1]
     port = int(argv[2])
-    global clientSocket
+    global clientSocket, lfg_thread, ingame, lfg
     clientSocket = socket(AF_INET, SOCK_STREAM)
     clientSocket.connect((host, port))
 
+    lfg_thread = threading.Thread(target=check_if_added)
     while(1):
+        # Check if added to game
+        if (not ingame and not lfg):
+            lfg_thread.start()
         command = input('ttt> ')
         # Check if command can be handled with one message to server
         if (check_command(command)):
