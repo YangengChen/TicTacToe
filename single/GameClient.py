@@ -85,7 +85,7 @@ def main(argv):
 
     host = argv[1]
     port = int(argv[2])
-    global clientSocket, lfg_thread, ingame, lfg
+    global clientSocket
     clientSocket = socket(AF_INET, SOCK_STREAM)
     clientSocket.connect((host, port))
 

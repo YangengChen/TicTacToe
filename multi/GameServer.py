@@ -19,7 +19,7 @@ help_menu = ('login [name]       Log into TicTacToe with username <name>\n'
              'observe [gameid]   Observe game <gameid>\n'
              'unobserve [gameid] Stop observing game <gameid>')
 
-usage = 'Usage:\npython GameServer.py [single, multiple]'
+usage = 'Usage:\npython GameServer.py'
 
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
@@ -38,13 +38,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
                 # Handle command
                 resp = self.handle_command(self.input)
                 # Send encoded response to player in json
-                if(self.game_ended is True):
-                    resp_json = self.encode_json('300 WIN', resp)
-                    self.game_ended = False
-                    global games
-                    games.remove(self.game)
-                else:
-                    resp_json = self.encode_json('200 OK', resp)
+                resp_json = self.encode_json('200 OK', resp)
                 self.request.sendall(resp_json.encode())
                 if (resp == 'Exiting TicTacToe...'):
                     break
@@ -69,14 +63,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             return self.print_players()
 
         elif (commands[0] == 'check'):
-            if ('curr_player' in self and self.curr_player.status == 'busy'):
-                opponentname = ''
-                if (self.game.player1 == self.curr_player):
-                    opponentname = self.game.player2.name
-                else:
-                    opponentname = self.game.player1.name
-                return opponentname
-            raise Exception('No game')
+            return self.check(commands)
 
         elif (commands[0] == 'play'):
             return self.play(commands[1])
@@ -85,25 +72,10 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             return self.place(commands[1])
 
         elif (commands[0] == 'update'):
-            if (('update ' + self.game.status) != comm or
-                self.game.game_over is True):
-                return self.game.status
-            else:
-                raise Exception('No update')
+            return self.update(commands)
 
         elif (commands[0] == 'observe'):
-            global games
-            obsgame = None
-            for game in games:
-                if (int(commands[1]) == game.gameid):
-                    obsgame = game
-            if (obsgame is not None):
-                raise Exception('No game')
-            if (('observe ' + obsgame.gameid + ' ' + obsgame.status)
-                != comm):
-                return self.game.status
-            else:
-                raise Exception('No update')
+            return self.observe(commands)
 
         elif (commands[0] == 'exit'):
             return 'Exiting TicTacToe...'
@@ -135,16 +107,14 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
 
     # Create new player object for new login
     def create_player(self, name):
-        try:
-            if self.curr_player != None:
-                return "Already logged in as " + self.curr_player.name
-        except:	
-            for player in players:
-                if player.name == name:
-                    return "Player " + name + " already exists."
-            player = Player(name, self)
-            players.append(player)
-            self.curr_player = player
+        if (hasattr(self, 'curr_player') and self.curr_player is not None):
+            return "Already logged in as " + self.curr_player.name
+        for player in players:
+            if player.name == name:
+                return "Player " + name + " already exists."
+        player = Player(name, self)
+        players.append(player)
+        self.curr_player = player
         return "Logged in as " + name
 
     # Remove player from records
@@ -169,9 +139,51 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
         else:
             return 'Player not available to play'
 
+    # Attempt to observe state of game matching gameid
+    def observe(self, commands):
+        # Find game if first observe request
+        if (not hasattr(self, 'game') or self.game is None):
+            global games
+            self.game = None
+            for game in games:
+                if (int(commands[1]) == game.gameid):
+                    self.game = game
+        # Game not found
+        if (self.game is not None):
+            raise Exception('No game')
+        # Return new movecount and game status
+        if (self.game.movecount != commands[2]):
+            return str(self.game.movecount + ' ' + self.game.status)
+        else:
+            raise Exception('No update')
+
+    # Check if in a game, return opponent's name
+    def check(self, commands):
+        if (hasattr(self, 'curr_player') and
+            self.curr_player.status == 'busy'):
+            opponentname = ''
+            if (self.game.player1 == self.curr_player):
+                opponentname = self.game.player2.name
+            else:
+                opponentname = self.game.player1.name
+            return opponentname
+        raise Exception('No game')
+
     # Attempt to place piece at location n
     def place(self, n):
-        return self.game.place(self.curr_player, n)
+        placement = self.game.place(self.curr_player, n)
+        pr = str(self.game.movecount + ' ' + placement)
+        if (self.game.movecount == '!'):
+            global games
+            games.remove(self.game)
+        return pr
+
+    # Check if game has been updated
+    def update(self, commands):
+        if (self.game.movecount != commands[1]):
+            return str(self.game.movecount + ' ' + self.game.status)
+        else:
+            raise Exception('No update')
 
     # Encode the response to player in json
     def encode_json(self, status, content):
@@ -180,7 +192,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
 
 
 def main(argv):
-    if (len(argv) != 2):
+    if (len(argv) != 1):
         print(usage)
         return 1
 

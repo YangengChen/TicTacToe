@@ -10,7 +10,7 @@ class Game:
         self.player2 = player2
         self.board = GameBoard()
         self.spectators = []
-        self.state = ''
+        self.status = ''
         self.movecount = '0'
         self.player1.tcphandler.game = self
         self.player2.tcphandler.game = self
@@ -70,7 +70,8 @@ class Game:
             otherplayer = self.player2
         leaver.end_game()
         otherplayer.end_game()
-        self.notify_all(leaver.name + ' has left the game.')
+        self.status = leaver.name + ' has left the game.'
+        self.movecount = '!'
 
     def end_game(self, winner, loser, draw=None):
         # Update player state

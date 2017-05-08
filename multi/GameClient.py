@@ -6,53 +6,54 @@ from time import sleep
 usage = 'Usage:\npython GameClient.py [host] [port]'
 
 clientSocket = None
-gamestatus = ''
+movecount = ''
 
 
-def print_resp(resp_json):
-    print(resp_json['content'])
+def communicate(message):
+    global clientSocket
+    clientSocket.send(message.encode())
+    resp = clientSocket.recv(1024).decode()
+    return json.loads(resp)
 
 
-def observe(command):
-    global clientSocket, gamestatus
+def update():
+    global movecount
+    # Continue to send for opponent's move or game end
     while (1):
-        sleep(0.5)
-        clientSocket.send(('observe ' + command[1] + ' ' + gamestatus).encode())
-        update = clientSocket.recv(1024).decode()
-        update_json = json.loads(update)
+        sleep(1)
+        update_json = communicate('update ' + movecount)
+        content = update_json['content']
         # Check if board has changed
         if (update_json['status'] == '200 OK'):
-            print(update_json['content'])
-            gamestatus = update_json['content']
-        elif (update_json['status'] == '300 WIN'):
-            return
-        else:
-            print(update_json['content'])
+            print(content[2:])
+            movecount = content[0:1]
             return
 
 
 def place(command):
     # Send place request
-    global clientSocket
-    clientSocket.send((command[0] + ' ' + command[1]).encode())
-    resp = clientSocket.recv(1024).decode()
-    resp_json = json.loads(resp)
-    print_resp(resp_json)
+    resp_json = communicate(command[0] + ' ' + command[1])
+    print(resp_json['content'][2:])
     if (resp_json['status'] == '400 ERROR'):
         return
-    global gamestatus
-    gamestatus = resp_json['content']
+    global movecount
+    movecount = resp_json['content'][0:1]
+    if (movecount == '!'):
+        return
+    # Check for updates
+    update()
 
-    # Continue to send for opponent's move or game end
+
+def observe(command):
+    global movecount
     while (1):
-        sleep(1)
-        clientSocket.send(('update ' + gamestatus).encode())
-        update = clientSocket.recv(1024).decode()
-        update_json = json.loads(update)
+        sleep(0.5)
+        update_json = communicate('observe ' + command[1] + ' ' + movecount)
         # Check if board has changed
         if (update_json['status'] == '200 OK'):
-            print(update_json['content'])
-            gamestatus = update_json['content']
+            print(update_json['content'][2:])
+            movecount = update_json['content'][0:1]
+        if (movecount == '!'):
             return
 
 
@@ -91,7 +92,7 @@ def main(argv):
 
     host = argv[1]
     port = int(argv[2])
-    global clientSocket, lfg_thread, ingame, lfg
+    global clientSocket
     clientSocket = socket(AF_INET, SOCK_STREAM)
     clientSocket.connect((host, port))
 
@@ -99,10 +100,8 @@ def main(argv):
         command = input('ttt> ')
         # Check if command can be handled with one message to server
         if (check_command(command)):
-            clientSocket.send(command.encode())
-            response = clientSocket.recv(1024)
-            responseObj = json.loads(response.decode())
-            print(responseObj['content'])
+            resp_json = communicate(command)
+            print(resp_json['content'])
             if (command == 'exit'):
                 break
     return 0
