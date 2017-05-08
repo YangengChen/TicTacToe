@@ -9,8 +9,6 @@ usage = 'Usage:\npython GameClient.py [host] [port]'
 clientSocket = None
 gamestatus = ''
 ingame = False
-lfg = False
-lfg_thread = None
 
 
 def print_resp(resp_json):
@@ -19,7 +17,13 @@ def print_resp(resp_json):
 
 def check_if_added():
     global clientSocket
-    clientSocket.send(('').encode())
+    while (1):
+        clientSocket.send(('check').encode())
+        resp = clientSocket.recv(1024).decode()
+        resp_json = json.loads(resp)
+        if (resp_json['status'] == '200 OK'):
+            print('Started game with ' + resp_json['content'])
+            return
 
 
 def place(command):
@@ -85,11 +89,10 @@ def main(argv):
     clientSocket = socket(AF_INET, SOCK_STREAM)
     clientSocket.connect((host, port))
 
+    # Check if added to game
     lfg_thread = threading.Thread(target=check_if_added)
+    lfg_thread.start()
     while(1):
-        # Check if added to game
-        if (not ingame and not lfg):
-            lfg_thread.start()
         command = input('ttt> ')
         # Check if command can be handled with one message to server
         if (check_command(command)):
@@ -98,7 +101,7 @@ def main(argv):
             responseObj = json.loads(response.decode())
             print(responseObj['content'])
             if (responseObj['status'] == '300 WIN'):
-                # start thread up again here
+                lfg_thread.start()
             if (command == 'exit'):
                 break
     return 0

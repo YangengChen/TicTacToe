@@ -66,6 +66,16 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
         elif (commands[0] == 'who'):
             return self.print_players()
 
+        elif (commands[0] == 'check'):
+            if (self.curr_player.status == 'busy'):
+                opponentname = ''
+                if (self.game.player1 == self.curr_player):
+                    opponentname = self.game.player2.name
+                else:
+                    opponentname = self.game.player1.name
+                return opponentname
+            raise Exception('No game')
+
         elif (commands[0] == 'play'):
             return self.play(commands[1])
 
@@ -73,7 +83,8 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             return self.place(commands[1])
 
         elif (commands[0] == 'update'):
-            if (('update ' + self.game.status) != comm or self.game.game_over is True):
+            if (('update ' + self.game.status) != comm or
+                self.game.game_over is True):
                 return self.game.status
             else:
                 raise Exception('No update')
