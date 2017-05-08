@@ -30,17 +30,19 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
 
     # Handler for connection request to server
     def handle(self):
-        print('START')
+        self.game_ended = False
         while(1):
             # Accept request from player
             self.input = self.request.recv(1024).decode()
             try:
                 # Handle command
-                print(self.input)
                 resp = self.handle_command(self.input)
-                print('response ' + resp)
                 # Send encoded response to player in json
-                resp_json = self.encode_json('200 OK', resp)
+                if(self.game_ended is True):
+                    resp_json = self.encode_json('300 WIN', resp)
+                    self.game_ended = False
+                else:
+                    resp_json = self.encode_json('200 OK', resp)
                 self.request.sendall(resp_json.encode())
                 if (resp == 'Exiting TicTacToe...'):
                     break
@@ -98,7 +100,10 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
         avail = 'Available Players: \n'
         for player in players:
             if (player.state == 'available'):
-                avail += player.name + ' '
+                avail += ('ID: '+ player.name +'\n' +
+                '\tWins: '+str(player.wins)+ '\n'+
+                '\tLosses: '+str(player.losses)+'\n'+
+                '\tDraws: ' + str(player.draws)+'\n')
         return avail
 
     # Create new player object for new login
