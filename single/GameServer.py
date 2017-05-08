@@ -7,7 +7,7 @@ import sys
 
 HOST, PORT = "localhost", 12000
 
-games = []
+game = None
 players = []
 
 help_menu = ('login [name]       Log into TicTacToe with username <name>\n'
@@ -85,7 +85,14 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
         player = Player(name, self)
         players.append(player)
         self.curr_player = player
-        return "Logged in as " + name
+
+        # Start new game
+        if (len(players) == 2):
+            global game, players
+            game = Game(0, self.curr_player, players[0])
+            return 'Game started with ' + players[0].name
+        else:
+            return 'Waiting for additional player...'
 
     # Remove player from records
     def player_exit(self):
