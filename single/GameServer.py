@@ -70,13 +70,12 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
     # Create new player object for new login
     def create_player(self, name):
         global players
-        if ('curr_player' in self and self.curr_player is not None):
+        if (hasattr(self, 'curr_player') and self.curr_player is not None):
             return "Already logged in as " + self.curr_player.name
         if (len(players) == 2):
             return 'Server can only accept two players'
-        for player in players:
-            if player.name == name:
-                return "Player " + name + " already exists."
+        if (players[0].name == name):
+            return "Player " + name + " already exists."
         player = Player(name, self)
         players.append(player)
         self.curr_player = player
