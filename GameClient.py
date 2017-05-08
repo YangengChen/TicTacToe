@@ -8,7 +8,6 @@ usage = 'Usage:\npython GameClient.py [host] [port]'
 
 clientSocket = None
 gamestatus = ''
-ingame = False
 
 
 def print_resp(resp_json):

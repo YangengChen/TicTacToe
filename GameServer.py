@@ -67,7 +67,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             return self.print_players()
 
         elif (commands[0] == 'check'):
-            if (self.curr_player.status == 'busy'):
+            if ('curr_player' in self and self.curr_player.status == 'busy'):
                 opponentname = ''
                 if (self.game.player1 == self.curr_player):
                     opponentname = self.game.player2.name
