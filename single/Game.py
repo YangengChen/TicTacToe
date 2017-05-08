@@ -60,7 +60,7 @@ class Game:
                 self.end_game(currplayer, otherplayer, draw=True)
             elif (gamestate == 'win'):  # Winner
                 self.end_game(currplayer, otherplayer)
-                self.movecount = '!'  # Complete
+            self.movecount = '!'  # Complete
         return self.status
 
     def leave_game(self, leaver):

@@ -48,8 +48,15 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
     # Checks input and calls related functionality
     def handle_command(self, comm):
         commands = comm.split(" ")
-        if(commands[0] == 'login'):
+        if (commands[0] == 'login'):
             return self.create_player(commands[1])
+
+        elif (commands[0] == 'meet'):
+            global players
+            if (len(players) == 2):
+                return 'Game started with ' + players[1].name
+            else:
+                raise Exception('No meet')
 
         elif (commands[0] == 'place'):
             return self.place(commands[1])
@@ -90,7 +97,8 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
     # Remove player from records
     def player_exit(self):
         global players
-        players.remove(self.curr_player)
+        if (hasattr(self, 'curr_player')):
+            players.remove(self.curr_player)
 
     # Attempt to place piece at location n
     def place(self, n):
