@@ -44,7 +44,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
                     break
             except Exception as msg:
                 # Something went wrong, send error message to player
-                err_json = self.encode_json('400 ERROR', str(msg.args))
+                err_json = self.encode_json('400 ERROR', str(msg.args[0]))
                 self.request.sendall(err_json.encode())
         # Player exiting
         self.player_exit()
@@ -88,7 +88,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
         gameString = ''
         global games
         for game in games:
-            gameString += ('Game Id: ' + str(game.gameid) +
+            gameString += ('Game Id: ' + game.gameid + '\n' +
                            '\tPlayer 1: ' + game.player1.name + '\n'
                            '\tPlayer 2: ' + game.player2.name + '\n')
         return gameString
@@ -131,7 +131,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
                             if player.name == other_player), None)
             # Check if same player, if not start new game
             if self.curr_player is not player2:
-                new_game = Game(len(games), self.curr_player, player2)
+                new_game = Game(str(len(games)), self.curr_player, player2)
                 games.append(new_game)
                 return 'Game started with ' + other_player
             else:
@@ -141,15 +141,20 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
 
     # Attempt to observe state of game matching gameid
     def observe(self, commands):
+        # Check if player is busy
+        if (not hasattr(self, 'curr_player') or
+            self.curr_player.state == 'busy'):
+            raise Exception('Unable to observe, currently busy')
         # Find game if first observe request
         if (not hasattr(self, 'game') or self.game is None):
             global games
             self.game = None
             for game in games:
-                if (int(commands[1]) == game.gameid):
+                print(game.gameid)
+                if (commands[1] == game.gameid):
                     self.game = game
         # Game not found
-        if (self.game is not None):
+        if (self.game is None):
             raise Exception('No game')
         # Return new movecount and game status
         if (self.game.movecount != commands[2]):

@@ -39,7 +39,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
                     break
             except Exception as msg:
                 # Something went wrong, send error message to player
-                err_json = self.encode_json('400 ERROR', str(msg.args))
+                err_json = self.encode_json('400 ERROR', str(msg.args[0]))
                 self.request.sendall(err_json.encode())
         # Player exiting
         self.player_exit()

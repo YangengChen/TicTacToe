@@ -53,8 +53,13 @@ def observe(command):
         if (update_json['status'] == '200 OK'):
             print(update_json['content'][2:])
             movecount = update_json['content'][0:1]
-        if (movecount == '!'):
-            return
+            if (movecount == '!'):
+                return
+        else:
+            if (update_json['content'] == 'No game' or
+                update_json['content'] == 'Unable to observe, currently busy'):
+                print(update_json['content'])
+                return
 
 
 def check_command(command):
