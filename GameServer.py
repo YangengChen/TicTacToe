@@ -97,8 +97,9 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             for game in games:
                 if (int(commands[1]) == game.gameid):
                     obsgame = game
-            if (obsgame is not None and
-                ('observe ' + obsgame.gameid + ' ' + obsgame.status)
+            if (obsgame is not None):
+                raise Exception('No game')
+            if (('observe ' + obsgame.gameid + ' ' + obsgame.status)
                 != comm):
                 return self.game.status
             else:

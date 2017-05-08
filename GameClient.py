@@ -26,6 +26,9 @@ def observe(command):
             gamestatus = update_json['content']
         elif (update_json['status'] == '300 WIN'):
             return
+        else:
+            print(update_json['content'])
+            return
 
 
 def place(command):
