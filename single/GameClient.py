@@ -13,24 +13,6 @@ def print_resp(resp_json):
     print(resp_json['content'])
 
 
-def observe(command):
-    global clientSocket, gamestatus
-    while (1):
-        sleep(0.5)
-        clientSocket.send(('observe ' + command[1] + ' ' + gamestatus).encode())
-        update = clientSocket.recv(1024).decode()
-        update_json = json.loads(update)
-        # Check if board has changed
-        if (update_json['status'] == '200 OK'):
-            print(update_json['content'])
-            gamestatus = update_json['content']
-        elif (update_json['status'] == '300 WIN'):
-            return
-        else:
-            print(update_json['content'])
-            return
-
-
 def place(command):
     # Send place request
     global clientSocket
@@ -61,10 +43,6 @@ def check_command(command):
     if len(command) == 1:
         if command[0] == "help":
             return True
-        elif command[0] == "games":
-            return True
-        elif command[0] == "who":
-            return True
         elif command[0] == "exit":
             return True
     elif len(command) == 2:
@@ -73,13 +51,6 @@ def check_command(command):
         elif command[0] == "place":
             place(command)
             return False
-        elif command[0] == "play":
-            return True
-        elif command[0] == "observe":
-            observe(command)
-            return False
-        elif command[0] == "unobserve":
-            return True
     print('Unsupported command.')
     return False
 
