@@ -41,6 +41,8 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
                 if(self.game_ended is True):
                     resp_json = self.encode_json('300 WIN', resp)
                     self.game_ended = False
+                    global games
+                    games.remove(self.game)
                 else:
                     resp_json = self.encode_json('200 OK', resp)
                 self.request.sendall(resp_json.encode())
@@ -89,6 +91,18 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             else:
                 raise Exception('No update')
 
+        elif (commands[0] == 'observe'):
+            global games
+            obsgame = None
+            for game in games:
+                if (int(commands[1]) == game.gameid):
+                    obsgame = game
+            if (obsgame is not None and
+                self.game.status.split()[0] != commands[2]):
+                return self.game.status
+            else:
+                raise Exception('No update')
+
         elif (commands[0] == 'exit'):
             return 'Exiting TicTacToe...'
 
@@ -111,10 +125,10 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
         avail = 'Available Players: \n'
         for player in players:
             if (player.state == 'available'):
-                avail += ('ID: '+ player.name +'\n' +
-                '\tWins: '+str(player.wins)+ '\n'+
-                '\tLosses: '+str(player.losses)+'\n'+
-                '\tDraws: ' + str(player.draws)+'\n')
+                avail += ('ID: ' + player.name + '\n' +
+                          '\tWins: '+str(player.wins) + '\n' +
+                          '\tLosses: '+str(player.losses) + '\n' +
+                          '\tDraws: ' + str(player.draws) + '\n')
         return avail
 
     # Create new player object for new login
