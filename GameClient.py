@@ -10,8 +10,7 @@ gamestatus = ''
 
 
 def print_resp(resp_json):
-    print('Status: ' + resp_json['status'] + '\n' +
-          'Server: ' + resp_json['content'])
+    print(resp_json['content'])
 
 
 def place(command):
@@ -84,8 +83,9 @@ def main(argv):
             clientSocket.send(command.encode())
             response = clientSocket.recv(1024)
             responseObj = json.loads(response.decode())
-            print("Status: " + responseObj['status'] + '\n' +
-                  "Server: " + responseObj['content'])
+            print(responseObj['content'])
+            if (responseObj['status'] == '300 WIN'):
+                # start thread up again here
             if (command == 'exit'):
                 break
     return 0

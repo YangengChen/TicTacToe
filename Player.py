@@ -25,6 +25,7 @@ class Player:
             self.losses += 1
         else:
             self.draws += 1
+        self.tcphandler.game_ended = True
 
     # Set player as having turn
     def give_turn(self):
