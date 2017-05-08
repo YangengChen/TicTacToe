@@ -98,7 +98,8 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
                 if (int(commands[1]) == game.gameid):
                     obsgame = game
             if (obsgame is not None and
-                self.game.status.split()[0] != commands[2]):
+                ('observe ' + obsgame.gameid + ' ' + obsgame.status)
+                != comm):
                 return self.game.status
             else:
                 raise Exception('No update')
