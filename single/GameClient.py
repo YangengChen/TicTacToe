@@ -55,6 +55,7 @@ def login(command):
         meet_json = communicate('meet')
         # Check if additional player logged in
         if (meet_json['status'] == '200 OK'):
+            print(meet_json['content'])
             update()
             return
 
