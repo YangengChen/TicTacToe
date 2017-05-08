@@ -73,6 +73,7 @@ def check_command(command):
         elif command[0] == "play":
             return True
         elif command[0] == "observe":
+            observe(command)
             return False
         elif command[0] == "unobserve":
             return True
