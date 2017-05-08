@@ -13,11 +13,6 @@ players = []
 help_menu = ('login [name]       Log into TicTacToe with username <name>\n'
              'place [1-9]        Place piece on box <1-9> during your turn\n'
              'exit               Exits TicTacToe ending current game\n'
-             'games              Display list of ongoing games and info\n'
-             'who                Display list of available players\n'
-             'play [name]        Challenge player <name>\n'
-             'observe [gameid]   Observe game <gameid>\n'
-             'unobserve [gameid] Stop observing game <gameid>')
 
 usage = 'Usage:\npython GameServer.py [single, multiple]'
 
@@ -75,7 +70,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
     # Create new player object for new login
     def create_player(self, name):
         global players
-        if (self.curr_player is not None):
+        if ('curr_player' in self and self.curr_player is not None):
             return "Already logged in as " + self.curr_player.name
         if (len(players) == 2):
             return 'Server can only accept two players'
@@ -88,7 +83,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
 
         # Start new game
         if (len(players) == 2):
-            global game, players
+            global game
             game = Game(0, self.curr_player, players[0])
             return 'Game started with ' + players[0].name
         else:
