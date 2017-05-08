@@ -6,11 +6,7 @@ from time import sleep
 usage = 'Usage:\npython GameClient.py [host] [port]'
 
 clientSocket = None
-gamestatus = ''
-
-
-def print_resp(resp_json):
-    print(resp_json['content'])
+movecount = ''
 
 
 def place(command):
@@ -19,22 +15,25 @@ def place(command):
     clientSocket.send((command[0] + ' ' + command[1]).encode())
     resp = clientSocket.recv(1024).decode()
     resp_json = json.loads(resp)
-    print_resp(resp_json)
+    print(resp_json['content'][2:])
     if (resp_json['status'] == '400 ERROR'):
         return
-    global gamestatus
-    gamestatus = resp_json['content']
+    global movecount
+    movecount = resp_json['content'][0:1]
+    if (movecount == '!'):
+        return
 
     # Continue to send for opponent's move or game end
     while (1):
         sleep(1)
-        clientSocket.send(('update ' + gamestatus).encode())
+        clientSocket.send(('update ' + movecount).encode())
         update = clientSocket.recv(1024).decode()
         update_json = json.loads(update)
+        content = update_json['content']
         # Check if board has changed
         if (update_json['status'] == '200 OK'):
-            print(update_json['content'])
-            gamestatus = update_json['content']
+            print(content[2:])
+            movecount = content[0:1]
             return
 
 

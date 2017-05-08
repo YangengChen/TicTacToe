@@ -10,7 +10,8 @@ class Game:
         self.player2 = player2
         self.board = GameBoard()
         self.spectators = []
-        self.status = self.board.to_string()
+        self.state = ''
+        self.movecount = '0'
         self.player1.tcphandler.game = self
         self.player2.tcphandler.game = self
         self.player1.start_game(self.board, 'X', player2.name)
@@ -53,10 +54,13 @@ class Game:
             currplayer.remove_turn()
             otherplayer.give_turn()
             self.status = self.board.to_string()
-        elif (gamestate == 'draw'):  # Draw
-            self.end_game(currplayer, otherplayer, draw=True)
-        elif (gamestate == 'win'):  # Winner
-            self.end_game(currplayer, otherplayer)
+            self.movecount = str(int(self.movecount) + 1)
+        else:
+            if (gamestate == 'draw'):  # Draw
+                self.end_game(currplayer, otherplayer, draw=True)
+            elif (gamestate == 'win'):  # Winner
+                self.end_game(currplayer, otherplayer)
+                self.movecount = '!'  # Complete
         return self.status
 
     def leave_game(self, leaver):
@@ -74,6 +78,7 @@ class Game:
         loser.end_game('lose')
         # Update game state
         if (draw is None):
-            self.status = winner.name + ' wins the game.'
+            self.status = (self.board.to_string() + winner.name +
+                           ' wins the game.')
         else:
-            self.status = 'The game ends in a draw.'
+            self.status = self.board.to_string() + 'The game ends in a draw.'

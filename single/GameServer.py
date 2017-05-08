@@ -55,9 +55,8 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             return self.place(commands[1])
 
         elif (commands[0] == 'update'):
-            if (('update ' + self.game.status) != comm or
-                self.game.game_over is True):
-                return self.game.status
+            if (self.game.movecount != commands[1]):
+                return str(self.game.movecount + ' ' + self.game.status)
             else:
                 raise Exception('No update')
 
@@ -95,7 +94,9 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
 
     # Attempt to place piece at location n
     def place(self, n):
-        return self.game.place(self.curr_player, n)
+        placement = self.game.place(self.curr_player, n)
+        pr = str(self.game.movecount + ' ' + placement)
+        return pr
 
     # Encode the response to player in json
     def encode_json(self, status, content):
