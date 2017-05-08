@@ -2,7 +2,6 @@ from socket import *
 import json
 import sys
 from time import sleep
-import threading
 
 usage = 'Usage:\npython GameClient.py [host] [port]'
 
@@ -14,14 +13,18 @@ def print_resp(resp_json):
     print(resp_json['content'])
 
 
-def check_if_added():
-    global clientSocket
+def observe(command):
+    global clientSocket, gamestatus
     while (1):
-        clientSocket.send(('check').encode())
-        resp = clientSocket.recv(1024).decode()
-        resp_json = json.loads(resp)
-        if (resp_json['status'] == '200 OK'):
-            print('Started game with ' + resp_json['content'])
+        sleep(0.5)
+        clientSocket.send(('observe ' + command[1] + ' ' + gamestatus).encode())
+        update = clientSocket.recv(1024).decode()
+        update_json = json.loads(update)
+        # Check if board has changed
+        if (update_json['status'] == '200 OK'):
+            print(update_json['content'])
+            gamestatus = update_json['content']
+        elif (update_json['status'] == '300 WIN'):
             return
 
 
@@ -88,9 +91,6 @@ def main(argv):
     clientSocket = socket(AF_INET, SOCK_STREAM)
     clientSocket.connect((host, port))
 
-    # Check if added to game
-    lfg_thread = threading.Thread(target=check_if_added)
-    lfg_thread.start()
     while(1):
         command = input('ttt> ')
         # Check if command can be handled with one message to server
@@ -99,8 +99,6 @@ def main(argv):
             response = clientSocket.recv(1024)
             responseObj = json.loads(response.decode())
             print(responseObj['content'])
-            if (responseObj['status'] == '300 WIN'):
-                lfg_thread.start()
             if (command == 'exit'):
                 break
     return 0
