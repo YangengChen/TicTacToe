@@ -133,12 +133,16 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
 
     # Create new player object for new login
     def create_player(self, name):
-        for player in players:
-            if player.name == name:
-                return "Player " + name + " already exists."
-        player = Player(name, self)
-        players.append(player)
-        self.curr_player = player
+        try:
+            if self.curr_player != None:
+                return "Already logged in as " + self.curr_player.name
+        except:	
+            for player in players:
+                if player.name == name:
+                    return "Player " + name + " already exists."
+            player = Player(name, self)
+            players.append(player)
+            self.curr_player = player
         return "Logged in as " + name
 
     # Remove player from records
