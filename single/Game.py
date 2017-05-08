@@ -76,5 +76,4 @@ class Game:
         if (draw is None):
             self.status = winner.name + ' wins the game.'
         else:
-            self.status = 'The game ends in a draw'
-        self.game_over = True
+            self.status = 'The game ends in a draw.'

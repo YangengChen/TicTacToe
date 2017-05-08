@@ -74,7 +74,7 @@ class GameTCPHandler(socketserver.BaseRequestHandler):
             return "Already logged in as " + self.curr_player.name
         if (len(players) == 2):
             return 'Server can only accept two players'
-        if (players[0].name == name):
+        if (len(players) != 0 and players[0].name == name):
             return "Player " + name + " already exists."
         player = Player(name, self)
         players.append(player)
